@@ -1,8 +1,9 @@
 package com.shpp.p2p.cs.kturevich.assignment2;
 
-import com.shpp.cs.a.graphics.WindowProgram;
+import java.awt.*;
 
-public class Assignment2Part3 extends WindowProgram {
+/** Program for drawing footprints. */
+public class Assignment2Part3 extends BaseDrawer {
 
     /* Constants controlling the relative positions of the
      * three toes to the upper-left corner of the pawprint.
@@ -52,6 +53,29 @@ public class Assignment2Part3 extends WindowProgram {
      * @param y The y coordinate of the upper-left corner of the bounding box for the pawprint.
      */
     private void drawPawprint(double x, double y) {
-        // here is your turn to type some code!!
+        drawHeel(x + HEEL_OFFSET_X, y + HEEL_OFFSET_Y);
+        drawToe(x + FIRST_TOE_OFFSET_X, y + FIRST_TOE_OFFSET_Y);
+        drawToe(x + SECOND_TOE_OFFSET_X, y + SECOND_TOE_OFFSET_Y);
+        drawToe(x + THIRD_TOE_OFFSET_X, y + THIRD_TOE_OFFSET_Y);
     }
+
+
+    /**
+     * @param x The x coordinate of the upper-left corner of the bounding box for the Heel.
+     * @param y The y coordinate of the upper-left corner of the bounding box for the Heel.
+     */
+    private void drawHeel(double x, double y) {
+        add(drawOval(x, y, HEEL_WIDTH, HEEL_HEIGHT,
+                     Color.BLACK, Color.BLACK));
+    }
+
+    /**
+     * @param x The x coordinate of the upper-left corner of the bounding box for the Toe.
+     * @param y The y coordinate of the upper-left corner of the bounding box for the Toe.
+     */
+    private void drawToe(double x, double y) {
+        add(drawOval(x, y, TOE_WIDTH, TOE_HEIGHT,
+                     Color.BLACK, Color.BLACK));
+    }
+
 }
