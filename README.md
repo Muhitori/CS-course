@@ -1,2 +1,2 @@
-# CS Omeworks
+# CS Homeworks
 
