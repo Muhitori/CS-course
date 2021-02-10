@@ -1,1 +1,2 @@
-# Homeworks of SHPP School
+# CS Omeworks
+
