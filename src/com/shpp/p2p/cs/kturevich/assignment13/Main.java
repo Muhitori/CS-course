@@ -1,19 +1,22 @@
-package com.shpp.p2p.cs.kturevich.assignment12;
+package com.shpp.p2p.cs.kturevich.assignment13;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 
     private static boolean[][] booleans;
+    private static final Queue<Point> queue = new LinkedList<>();
     private final static int MINIMAL_OBJECT_SIZE = 200;
 
     public static void main(String[] args) {
         String FILENAME = "";
 
         if(args.length == 0){
-            FILENAME = "assets/eheh.jpg";
+            FILENAME = "assets/test.jpg";
         } else {
             FILENAME = args[0];
             FILENAME = FILENAME.replaceAll(" ", "");
@@ -40,30 +43,44 @@ public class Main {
 
         for(int i = 0; i < booleans.length; i++){
             for (int j = 0; j < booleans[i].length; j++){
-                //If object is bigger than minimal size - its not trash
-                if(dfs(i ,j) > MINIMAL_OBJECT_SIZE) {
-                    result++;
+                //If object is not background...
+                if (!booleans[i][j]) {
+                    //...and object is not trash
+                    if (bfs(i, j) > MINIMAL_OBJECT_SIZE) {
+                        result++;
+                    }
                 }
             }
         }
         return result;
     }
 
-    //Depth first search algorithm
-    private static int dfs(int u, int v) {
-        //if visited - return zero object size
-        if (booleans[u][v])
-            return 0;
+    //Wide first search algorithm
+    private static int bfs(int u, int v) {
         int objectSize = 1;
+
+        queue.add(new Point(v, u));
         booleans[u][v] = true;
+
+        while (!queue.isEmpty()) {
+            objectSize++;
+            Point point = queue.poll();
+            checkChildren(point.y, point.x);
+        }
+
+        return objectSize;
+    }
+
+    //Method to fill queue with children of this node
+    private static void checkChildren(int u, int v) {
 
         int[][] neighbours = {
                 //top
-                {u - 1, v - 1}, {u - 1, v}, {u - 1, v + 1},
+                {u - 1, v},
                 //left & right
                 {u, v - 1}, {u, v + 1},
                 //bottom
-                {u + 1, v}, {u + 1, v + 1}, {u + 1, v - 1}
+                {u + 1, v}
         };
 
         //check all neighbours
@@ -77,10 +94,9 @@ public class Main {
 
             //if not visited
             if (!booleans[y][x]) {
-                objectSize += dfs(y, x);
+                queue.add(new Point(x,y));
+                booleans[y][x] = true;
             }
         }
-        return objectSize;
     }
-
 }
