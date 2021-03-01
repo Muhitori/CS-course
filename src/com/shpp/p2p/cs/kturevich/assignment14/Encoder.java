@@ -17,7 +17,9 @@ public class Encoder {
         this.outFile = outFile;
     }
 
-    public void encoding() throws IOException {
+    public void main() throws IOException {
+        long start = System.currentTimeMillis();
+
         byte[] byteArray = Files.readAllBytes(Paths.get(inFile));
         long fileSize = Files.size(Paths.get(inFile));
 
@@ -27,9 +29,19 @@ public class Encoder {
         HashMap<Byte, String> dictionary = generateDictionary(uniqueBytes);
         byte[] dictionaryBytes = dictionaryToBytes(dictionary);
 
-        String newData = dataToString(byteArray, dictionary);
+        String stringOfBits = encode(byteArray, dictionary);
+        byte[] newData = binaryStringToBytes(stringOfBits);
 
         write(fileSize, dictionaryBytes, newData);
+
+        System.out.println("Archiving took " + (System.currentTimeMillis() - start) +" ms");
+        System.out.println("Original file size: " + fileSize + " bytes");
+
+        long archivedFileSize = Integer.BYTES + Long.BYTES + dictionaryBytes.length + newData.length;
+        System.out.println("Archived file size: " + archivedFileSize + " bytes");
+
+        double archivedPercentage = (archivedFileSize / (double) fileSize) * 100;
+        System.out.println("Efficiency of archiving: " + (100 - Math.round(archivedPercentage)) + "%");
     }
 
     private HashMap<Byte, String> generateDictionary(ArrayList<Byte> uniqueBytes) {
@@ -95,7 +107,7 @@ public class Encoder {
         return result;
     }
 
-    private String dataToString(byte[] byteArray, HashMap<Byte, String> dictionary) {
+    private String encode(byte[] byteArray, HashMap<Byte, String> dictionary) {
         StringBuilder result = new StringBuilder();
 
         for (byte b : byteArray) {
@@ -108,7 +120,17 @@ public class Encoder {
         return result.toString();
     }
 
-    private void write(long fileSize, byte[] dictionaryBytes, String bits) throws IOException {
+    private byte[] binaryStringToBytes(String bits) {
+        byte[] dataBytes = new byte[bits.length() / 8];
+
+        for (int i = 0, j = 0; i < dataBytes.length; i++, j += 8) {
+            dataBytes[i] = (byte) Integer.parseInt(bits.substring(j, j + 8), 2);
+        }
+
+        return dataBytes;
+    }
+
+    private void write(long fileSize, byte[] dictionaryBytes, byte[] newData) throws IOException {
         Files.deleteIfExists(Path.of(outFile));
         FileOutputStream fos = new FileOutputStream(outFile, true);
 
@@ -118,10 +140,7 @@ public class Encoder {
         fos.write(longBuffer.array());
 
         fos.write(dictionaryBytes);
-
-        for (int i = 0; i + 8 <= bits.length(); i += 8) {
-            fos.write(Integer.parseInt(bits.substring(i, i + 8), 2));
-        }
+        fos.write(newData);
         fos.close();
     }
 }

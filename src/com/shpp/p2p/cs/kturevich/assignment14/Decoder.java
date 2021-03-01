@@ -21,7 +21,10 @@ public class Decoder {
     }
 
     public void main() throws IOException, ClassNotFoundException {
+        long start = System.currentTimeMillis();
+
         this.byteArray = Files.readAllBytes(Paths.get(inFile));
+        long packedFileSize = this.byteArray.length;
 
         int dictionaryLength = ByteBuffer.wrap(sliceBytes(Integer.BYTES)).getInt();
         long fileLength = ByteBuffer.wrap(sliceBytes(Long.BYTES)).getLong();
@@ -29,13 +32,16 @@ public class Decoder {
         HashMap<Byte, String> dictionary = bytesToDictionary(sliceBytes(dictionaryLength));
 
         String dataBinaryString = dataBinaryString();
-
-        ArrayList<Byte> originalData = decoding(dataBinaryString, dictionary);
+        ArrayList<Byte> originalData = decode(dataBinaryString, dictionary);
 
         write(originalData);
+
+        System.out.println("Unpacking took " + (System.currentTimeMillis() - start) +" ms");
+        System.out.println("Archived file size: " + packedFileSize + " bytes");
+        System.out.println("Unpacked file size: " + originalData.size() + " bytes");
     }
 
-    private ArrayList<Byte> decoding(String dataBinaryString, HashMap<Byte, String> dictionary) {
+    private ArrayList<Byte> decode(String dataBinaryString, HashMap<Byte, String> dictionary) {
         ArrayList<Byte> result = new ArrayList<>();
 
         String firstValue = (String) dictionary.values().toArray()[0];
@@ -92,9 +98,14 @@ public class Decoder {
     private void write(ArrayList<Byte> originalData) throws IOException {
         Files.deleteIfExists(Path.of(outFile));
         FileOutputStream fos = new FileOutputStream(outFile, true);
-        for (Byte b : originalData) {
-            fos.write(b);
+
+        byte[] dataBytes = new byte[originalData.size()];
+
+        for (int i = 0; i < dataBytes.length; i++) {
+            dataBytes[i] = originalData.get(i);
         }
+
+        fos.write(dataBytes);
         fos.close();
     }
 }
