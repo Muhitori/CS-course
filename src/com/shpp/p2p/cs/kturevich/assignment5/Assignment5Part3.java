@@ -66,5 +66,4 @@ public class Assignment5Part3 extends TextProgram {
         //Check letters order
         return index1 < index2 && index2 < index3;
     }
-
 }

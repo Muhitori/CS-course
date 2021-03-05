@@ -1,12 +1,11 @@
 package com.shpp.p2p.cs.kturevich.assignment14;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Assignment14Part1 {
 
-    private static final String FILENAME = "test.txt";
+    private static final String FILENAME = "assets/archive/d.txt.par";
 
     public static void main(String[] args) {
         ArrayList<String> argsList = new ArrayList<>(Arrays.asList(args));
@@ -24,7 +23,6 @@ public class Assignment14Part1 {
 
                     if (argsList.contains("-a")) {
                         encode(firstFile, secondFile);
-                        return;
                     }
 
                     if (argsList.contains("-u")) {
@@ -35,10 +33,11 @@ public class Assignment14Part1 {
                 singleFIleProcessing(argsList, 0);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error with: " + e.getMessage());
         }
     }
 
+    //Actions if args takes 1 file
     public static void singleFIleProcessing (ArrayList<String> argsList, int fileIndex) throws Exception {
         String file = "";
 
@@ -62,6 +61,12 @@ public class Assignment14Part1 {
             return;
         }
 
+        if (extension.equals(".par") && file.split("\\.").length == 2) {
+            String filename = file.substring(0, lastDotIndex);
+            decode(file, filename + ".uar");
+            return;
+        }
+
         if (extension.equals(".par")) {
             String filename = file.substring(0, lastDotIndex);
             decode(file, filename);
@@ -70,6 +75,7 @@ public class Assignment14Part1 {
         }
     }
 
+    //Conditions if 2 elements in args
     public static void doubleElementsCases(ArrayList<String> argsList) throws Exception {
         if (argsList.contains("-u") && argsList.contains("-a"))
             throw new Exception("Conflicting parameters");
