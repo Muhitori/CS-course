@@ -1,52 +1,52 @@
 package com.shpp.p2p.cs.kturevich.assignment15;
 
-public class Node<T> {
-    private Node<T> parent;
-    private Node<T> left;
-    private Node<T> right;
-    private T value;
+public class Node {
+    private Node parent;
+    private Node left;
+    private Node right;
+    private Byte value;
 
-    Node(T value) {
+    Node(Byte value) {
         this.value = value;
     }
 
-    public Node<T> getLeft() {
+    public Node getLeft() {
         return left;
     }
 
-    public Node<T> getRight() {
+    public Node getRight() {
         return right;
     }
 
-    public Node<T> getParent() {
+    public Node getParent() {
         return parent;
     }
 
-    public void setLeft(Node<T> leftChild) {
+    public void setLeft(Node leftChild) {
         this.left = leftChild;
     }
 
-    public void setRight(Node<T> rightChild) {
+    public void setRight(Node rightChild) {
         this.right = rightChild;
     }
 
-    public void setParent(Node<T> parent) {
+    public void setParent(Node parent) {
         this.parent = parent;
     }
 
-    public T getValue() {
+    public Byte getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(Byte value) {
         this.value = value;
     }
 
     @Override
     public String toString() {
-        T parentValue = (T) "none";
-        T leftValue = (T) "none";
-        T rightValue = (T) "none";
+        Byte parentValue = null;
+        Byte leftValue = null;
+        Byte rightValue = null;
 
         if (parent != null)
             parentValue = parent.getValue();
@@ -59,9 +59,9 @@ public class Node<T> {
 
 
         return "Node{" +
-                "parent=" + parentValue +
-                ", left=" + leftValue +
-                ", right=" + rightValue +
+                "parentValue=" + parentValue +
+                ", leftValue=" + leftValue +
+                ", rightValue=" + rightValue +
                 ", value='" + value + '\'' +
                 '}';
     }

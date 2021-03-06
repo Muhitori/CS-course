@@ -1,11 +1,11 @@
 package com.shpp.p2p.cs.kturevich.assignment15;
 
-public class Frequency<T> {
-    private final T value;
+public class Frequency {
+    private final Node node;
     private int frequency;
 
-    Frequency(T value, int frequency) {
-        this.value = value;
+    Frequency(Node node, int frequency) {
+        this.node = node;
         this.frequency = frequency;
     }
 
@@ -13,8 +13,8 @@ public class Frequency<T> {
         return frequency;
     }
 
-    public T getValue() {
-        return value;
+    public Node getNode() {
+        return this.node;
     }
 
     public void setFrequency(int frequency) {
@@ -24,7 +24,7 @@ public class Frequency<T> {
     @Override
     public String toString() {
         return "Frequency{" +
-                "node=" + value +
+                "value=" + node +
                 ", frequency=" + frequency +
                 '}';
     }
