@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class Encoder {
     //First file path
@@ -19,6 +20,7 @@ public class Encoder {
     private final String outFile;
     //New length of byte
     private int byteLength;
+    private Stack<Integer> stack = new Stack<>();
 
     Encoder(String inFile, String outFile) {
         this.inFile = inFile;

@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class Huffman {
     private Byte[] byteArray;
+    private ArrayList<Frequency> frequencyTable;
 
     Huffman(Byte[] byteArray) {
         this.byteArray = byteArray;
+        setFrequencyTable();
     }
 
-    public void main() {
-        ArrayList<Frequency> frequencyTable = new ArrayList<>();
+    private void setFrequencyTable() {
+        frequencyTable = new ArrayList<>();
 
         for (Byte b : byteArray) {
             Frequency temp = containsValue(frequencyTable, b);
@@ -21,47 +23,27 @@ public class Huffman {
             }
             frequencyTable.add(new Frequency(new Node(b), 1));
         }
-
-        Node HuffmanTree = buildHuffmanTree(frequencyTable);
-
-        dfsHuffman(HuffmanTree);
     }
 
-
-    private void dfsHuffman(Node node) {
-        if (node.getParent() == null) {
-            System.out.println("Root: " + node);
-        } else {
-            System.out.println(node);
-        }
-
-        if (node.getLeft() != null) {
-            dfsHuffman(node.getLeft());
-        }
-        if (node.getRight() != null) {
-            dfsHuffman(node.getRight());
-        }
-    }
-
-    private Node buildHuffmanTree (ArrayList<Frequency> nodesNodeFrequency) {
-        while (nodesNodeFrequency.size() > 1) {
+    public Node buildHuffmanTree () {
+        while (frequencyTable.size() > 1) {
             Node newNode = new Node(null);
 
-            Frequency first = minimumNode(nodesNodeFrequency);
+            Frequency first = minimumNode(frequencyTable);
             Node firstNode = first.getNode();
-            nodesNodeFrequency.remove(first);
+            frequencyTable.remove(first);
             firstNode.setParent(newNode);
 
-            Frequency second = minimumNode(nodesNodeFrequency);
+            Frequency second = minimumNode(frequencyTable);
             Node secondNode = second.getNode();
-            nodesNodeFrequency.remove(second);
+            frequencyTable.remove(second);
             secondNode.setParent(newNode);
 
             newNode.setLeft(firstNode);
             newNode.setRight(secondNode);
-            nodesNodeFrequency.add(new Frequency(newNode, first.getFrequency()+ second.getFrequency()));
+            frequencyTable.add(new Frequency(newNode, first.getFrequency()+ second.getFrequency()));
         }
-        return nodesNodeFrequency.get(0).getNode();
+        return frequencyTable.get(0).getNode();
     }
 
     private Frequency minimumNode(ArrayList<Frequency> arr) {
@@ -81,6 +63,21 @@ public class Huffman {
             }
         }
         return null;
+    }
+
+    public static void printTree(Node node) {
+        if (node.getParent() == null) {
+            System.out.println("Root: " + node);
+        } else {
+            System.out.println(node);
+        }
+
+        if (node.getLeft() != null) {
+            printTree(node.getLeft());
+        }
+        if (node.getRight() != null) {
+            printTree(node.getRight());
+        }
     }
 
     private static boolean areEqual(Node a, Node b) {

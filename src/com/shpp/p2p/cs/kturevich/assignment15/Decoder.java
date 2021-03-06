@@ -8,10 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Decoder {
     //Path to the file that will be decoded
@@ -20,6 +17,13 @@ public class Decoder {
     private final String outFile;
     //Encoded file in bytes
     private byte[] byteArray;
+
+    private ArrayList<Integer> stack = new ArrayList<>();
+    private HashMap<Byte, String> map = new HashMap<>();
+
+    ArrayList<Boolean> treeShape = new ArrayList<>();
+    LinkedList<Byte> leaves = new LinkedList<>();
+
 
     Decoder(String inFile, String outFile) {
         this.inFile = inFile;
@@ -33,16 +37,27 @@ public class Decoder {
         this.byteArray = Files.readAllBytes(Paths.get(inFile));
         long packedFileSize = this.byteArray.length;
 
-        //get dictionary & unpacked file sizes (which i do not know why i encoded)
-        int dictionaryLength = ByteBuffer.wrap(sliceBytes(Integer.BYTES)).getInt();
-        long fileLength = ByteBuffer.wrap(sliceBytes(Long.BYTES)).getLong();
+        int zeroesCount = ByteBuffer.wrap(sliceBytes(Short.BYTES)).getShort();
+        int treeSize = ByteBuffer.wrap(sliceBytes(Short.BYTES)).getShort();
 
-        //get encoded dictionary
-        HashMap<Byte, String> dictionary = bytesToDictionary(sliceBytes(dictionaryLength));
+        decodeTree(treeSize);
+        sliceBytes(treeSize);
 
-        //get encoded binary string & cast it to byte array
-        String dataBinaryString = dataBinaryString();
-        ArrayList<Byte> originalData = decode(dataBinaryString, dictionary);
+        int leavesCount = leavesCount();
+        decodeLeaves(leavesCount);
+        sliceBytes(leavesCount);
+
+        Node huffmanTree = unflattenTree();
+
+        String[] decodedBinary = dataBinaryString().split("");
+
+        String[] decodedData = new String[decodedBinary.length - zeroesCount];
+
+        for (int i = 0; i < decodedData.length; i++) {
+            decodedData[i] = decodedBinary[i];
+        }
+
+        ArrayList<Byte> originalData = decode(huffmanTree, decodedData);
 
         write(originalData);
 
@@ -51,41 +66,65 @@ public class Decoder {
         System.out.println("Unpacked file size: " + originalData.size() + " bytes");
     }
 
-    //Decode binary string to byte array
-    private ArrayList<Byte> decode(String dataBinaryString, HashMap<Byte, String> dictionary) {
+    private void decodeTree(int treeSize) {
+        for (int i = 0; i < treeSize; i++)
+            treeShape.add(byteArray[i] == 1);
+    }
+
+    private void decodeLeaves(int leavesCount) {
+        for (int i = 0; i < leavesCount; i++)
+            leaves.add(byteArray[i]);
+    }
+
+    private Node unflattenTree() {
+        if (!treeShape.get(0))
+            return new Node(leaves.get(0));
+
+        Node node = new Node(null);
+        for (int i = 1; i < treeShape.size(); i++) {
+            if (treeShape.get(i)) {
+                Node newNode = new Node(null);
+
+                if (node.getLeft() == null) {
+                    node.setLeft(newNode);
+                } else {
+                    node.setRight(newNode);
+                }
+
+                newNode.setParent(node);
+                node = newNode;
+            } else {
+                Node newNode = new Node(leaves.poll());
+
+                if (node.getLeft() == null) {
+                    node.setLeft(newNode);
+                } else {
+                    node.setRight(newNode);
+                }
+
+                newNode.setParent(node);
+
+                while (node.getRight() != null && node.getParent() != null)
+                    node = node.getParent();
+            }
+        }
+        return node;
+    }
+
+    private ArrayList<Byte> decode(Node node, String[] binaryString) {
         ArrayList<Byte> result = new ArrayList<>();
+        for (String s : binaryString) {
+            node = s.equals("0") ? node.getLeft() : node.getRight();
 
-        //calculate reading step based on first value length
-        String firstValue = (String) dictionary.values().toArray()[0];
-        int step = firstValue.length();
-
-        //create new dictionary from encoded
-        HashMap<String, Byte> newDictionary = createNewDictionary(dictionary);
-
-        for (int i = 0; i + step <= dataBinaryString.length(); i += step) {
-            result.add(newDictionary.get(dataBinaryString.substring(i, i + step)));
+            if (node.getValue() != null) {
+                result.add(node.getValue());
+                while (node.getParent() != null)
+                    node = node.getParent();
+            }
         }
-
         return result;
     }
 
-    //Change keys & values of dictionary >_>
-    private HashMap<String, Byte> createNewDictionary(HashMap<Byte, String> dictionary) {
-        HashMap<String, Byte> result = new HashMap<>();
-
-        for(Map.Entry<Byte, String> entry : dictionary.entrySet()) {
-            result.put(entry.getValue(), entry.getKey());
-        }
-
-        return result;
-    }
-
-    //get dictionary from bytes array
-    private HashMap<Byte, String> bytesToDictionary(byte[] bytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
-        ObjectInputStream in = new ObjectInputStream(byteIn);
-        return (HashMap<Byte, String>) in.readObject();
-    }
 
     //Slice global bytearray & return sliced value
     private byte[] sliceBytes(int sliceNumber) {
@@ -94,7 +133,6 @@ public class Decoder {
         for (int i = 0; i < sliceNumber; i++) {
             result[i] = byteArray[i];
         }
-
         byteArray = Arrays.copyOfRange(byteArray, sliceNumber, byteArray.length);
 
         return result;
@@ -114,6 +152,15 @@ public class Decoder {
         return result.toString();
     }
 
+    private int leavesCount() {
+        int result = 0;
+        for (Boolean aBoolean : treeShape) {
+            if (!aBoolean)
+                result++;
+        }
+        return result;
+    }
+
     private void write(ArrayList<Byte> originalData) throws IOException {
         Files.deleteIfExists(Path.of(outFile));
         FileOutputStream fos = new FileOutputStream(outFile, true);
@@ -128,5 +175,4 @@ public class Decoder {
         fos.write(dataBytes);
         fos.close();
     }
-
 }
