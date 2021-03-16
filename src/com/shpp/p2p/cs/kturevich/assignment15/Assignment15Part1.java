@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Assignment15Part1 {
 
-    private static final String FILENAME = "assets/archive/empty.txt";
+    private static final String FILENAME = "assets/archive/example2.txt.par";
 
     public static void main(String[] args) throws Exception {
         ArrayList<String> argsList = new ArrayList<>(Arrays.asList(args));
@@ -15,6 +15,7 @@ public class Assignment15Part1 {
                 if (argsList.size() == 2) {
                     doubleElementsCases(argsList);
                 } else {
+                    //this branch for cases with 3+ elements in args
                     if (argsList.contains("-u") && argsList.contains("-a"))
                         throw new Exception("Conflicting parameters");
 

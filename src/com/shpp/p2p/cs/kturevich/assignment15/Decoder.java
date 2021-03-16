@@ -1,9 +1,7 @@
 package com.shpp.p2p.cs.kturevich.assignment15;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,46 +16,45 @@ public class Decoder {
     //Encoded file in bytes
     private byte[] byteArray;
 
-    private ArrayList<Integer> stack = new ArrayList<>();
-    private HashMap<Byte, String> map = new HashMap<>();
-
     ArrayList<Boolean> treeShape = new ArrayList<>();
     LinkedList<Byte> leaves = new LinkedList<>();
-
 
     Decoder(String inFile, String outFile) {
         this.inFile = inFile;
         this.outFile = outFile;
     }
 
-    public void main() throws IOException, ClassNotFoundException {
+    public void main() throws Exception {
         long start = System.currentTimeMillis();
 
         //Reading packed file
         this.byteArray = Files.readAllBytes(Paths.get(inFile));
         long packedFileSize = this.byteArray.length;
 
-        int zeroesCount = ByteBuffer.wrap(sliceBytes(Short.BYTES)).getShort();
-        int treeSize = ByteBuffer.wrap(sliceBytes(Short.BYTES)).getShort();
+        //original array is sliced each time i get some data
+        //get zeroes count
+        int zeroesCount = byteArray[0];
+        sliceBytes(Byte.BYTES);
 
-        decodeTree(treeSize);
+        //get tree size & tree shape
+        int treeSize = ByteBuffer.wrap(sliceBytes(Short.BYTES)).getShort();
+        decodeTreeShape(treeSize);
         sliceBytes(treeSize);
 
+        //get leaves count & leaves
         int leavesCount = leavesCount();
         decodeLeaves(leavesCount);
         sliceBytes(leavesCount);
 
-        Node huffmanTree = unflattenTree();
-
+        //get tree & compressed binary
+        Node huffmanTree = unflatteringTree();
         String[] decodedBinary = dataBinaryString().split("");
 
-        String[] decodedData = new String[decodedBinary.length - zeroesCount];
+        //if while archiving was added external zeroes
+        if (zeroesCount > 0)
+            decodedBinary = removeExternalZeroes(decodedBinary, zeroesCount);
 
-        for (int i = 0; i < decodedData.length; i++) {
-            decodedData[i] = decodedBinary[i];
-        }
-
-        ArrayList<Byte> originalData = decode(huffmanTree, decodedData);
+        ArrayList<Byte> originalData = decode(huffmanTree, decodedBinary);
 
         write(originalData);
 
@@ -66,7 +63,8 @@ public class Decoder {
         System.out.println("Unpacked file size: " + originalData.size() + " bytes");
     }
 
-    private void decodeTree(int treeSize) {
+
+    private void decodeTreeShape(int treeSize) {
         for (int i = 0; i < treeSize; i++)
             treeShape.add(byteArray[i] == 1);
     }
@@ -76,34 +74,27 @@ public class Decoder {
             leaves.add(byteArray[i]);
     }
 
-    private Node unflattenTree() {
+    //Building tree from tree shape & leaves data
+    private Node unflatteringTree() throws Exception {
+        //if root is leave - return node with value
         if (!treeShape.get(0))
             return new Node(leaves.get(0));
 
+        //create node for root & starting from index 1
         Node node = new Node(null);
         for (int i = 1; i < treeShape.size(); i++) {
+            //true - empty node, false - leave
             if (treeShape.get(i)) {
                 Node newNode = new Node(null);
+                addChild(node, newNode);
 
-                if (node.getLeft() == null) {
-                    node.setLeft(newNode);
-                } else {
-                    node.setRight(newNode);
-                }
-
-                newNode.setParent(node);
+                //set new node as current
                 node = newNode;
             } else {
                 Node newNode = new Node(leaves.poll());
+                addChild(node, newNode);
 
-                if (node.getLeft() == null) {
-                    node.setLeft(newNode);
-                } else {
-                    node.setRight(newNode);
-                }
-
-                newNode.setParent(node);
-
+                //looking for empty right spot
                 while (node.getRight() != null && node.getParent() != null)
                     node = node.getParent();
             }
@@ -111,6 +102,18 @@ public class Decoder {
         return node;
     }
 
+    private void addChild(Node parentNode, Node childNode) throws Exception {
+        if (parentNode.getLeft() == null) {
+            parentNode.setLeft(childNode);
+        } else if (parentNode.getRight() == null){
+            parentNode.setRight(childNode);
+        } else {
+            throw new Exception("Problem with three shape");
+        }
+        childNode.setParent(parentNode);
+    }
+
+    //Get original data from compressed binary
     private ArrayList<Byte> decode(Node node, String[] binaryString) {
         ArrayList<Byte> result = new ArrayList<>();
         for (String s : binaryString) {
@@ -125,13 +128,20 @@ public class Decoder {
         return result;
     }
 
+    //Remove zeroes, which might be added while archiving
+    private String[] removeExternalZeroes(String[] decodedBinary, int zeroesCount) {
+        String[] result = new String[decodedBinary.length - zeroesCount];
+        if (result.length >= 0)
+            System.arraycopy(decodedBinary, 0, result, 0, result.length);
+        return result;
+    }
 
     //Slice global bytearray & return sliced value
     private byte[] sliceBytes(int sliceNumber) {
         byte[] result = new byte[sliceNumber];
 
-        for (int i = 0; i < sliceNumber; i++) {
-            result[i] = byteArray[i];
+        if (sliceNumber >= 0) {
+            System.arraycopy(byteArray, 0, result, 0, sliceNumber);
         }
         byteArray = Arrays.copyOfRange(byteArray, sliceNumber, byteArray.length);
 

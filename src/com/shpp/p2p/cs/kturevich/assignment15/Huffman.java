@@ -2,6 +2,7 @@ package com.shpp.p2p.cs.kturevich.assignment15;
 
 import java.util.ArrayList;
 
+//Class for Huffman methods
 public class Huffman {
     private Byte[] byteArray;
     private ArrayList<Frequency> frequencyTable;
@@ -16,6 +17,8 @@ public class Huffman {
 
         for (Byte b : byteArray) {
             Frequency temp = containsValue(frequencyTable, b);
+
+            //if this node is exist in table - add 1 to its value
             if (temp != null) {
                 temp = frequencyTable.get(frequencyTable.indexOf(temp));
                 temp.setFrequency(temp.getFrequency() + 1);
@@ -29,14 +32,17 @@ public class Huffman {
         while (frequencyTable.size() > 1) {
             Node newNode = new Node(null);
 
+            //Get nodes with smallest values...
             Frequency first = minimumNode(frequencyTable);
             Node firstNode = first.getNode();
             frequencyTable.remove(first);
-            firstNode.setParent(newNode);
 
             Frequency second = minimumNode(frequencyTable);
             Node secondNode = second.getNode();
             frequencyTable.remove(second);
+
+            //...and add them to new node which value is summarized from its children
+            firstNode.setParent(newNode);
             secondNode.setParent(newNode);
 
             newNode.setLeft(firstNode);
@@ -46,6 +52,7 @@ public class Huffman {
         return frequencyTable.get(0).getNode();
     }
 
+    //Return node with smallest value
     private Frequency minimumNode(ArrayList<Frequency> arr) {
         Frequency minimum = arr.get(0);
         for (Frequency frequency : arr) {
@@ -56,6 +63,7 @@ public class Huffman {
         return minimum;
     }
 
+    //Check if node already exists in table
     private Frequency containsValue (ArrayList<Frequency> arr, Byte c) {
         for (Frequency frequency : arr) {
             if (frequency.getNode().getValue().equals(c)) {
@@ -63,26 +71,5 @@ public class Huffman {
             }
         }
         return null;
-    }
-
-    public static void printTree(Node node) {
-        if (node.getParent() == null) {
-            System.out.println("Root: " + node);
-        } else {
-            System.out.println(node);
-        }
-
-        if (node.getLeft() != null) {
-            printTree(node.getLeft());
-        }
-        if (node.getRight() != null) {
-            printTree(node.getRight());
-        }
-    }
-
-    private static boolean areEqual(Node a, Node b) {
-        return a.getParent().getValue().equals(b.getParent().getValue()) &&
-                a.getLeft().getValue().equals(b.getLeft().getValue()) &&
-                a.getRight().getValue().equals(b.getRight().getValue());
     }
 }

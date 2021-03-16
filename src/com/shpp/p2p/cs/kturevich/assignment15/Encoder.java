@@ -14,13 +14,13 @@ public class Encoder {
     //Second file path
     private final String outFile;
 
-    private ArrayList<Integer> stack = new ArrayList<>();
-    private HashMap<Byte, String> map = new HashMap<>();
+    private final Stack<Integer> stack = new Stack<>();
+    private final HashMap<Byte, String> map = new HashMap<>();
 
-    LinkedList<Byte> leaves = new LinkedList<>();
-    ArrayList<Boolean> treeShape = new ArrayList<>();
+    private final LinkedList<Byte> leaves = new LinkedList<>();
+    private final ArrayList<Boolean> treeShape = new ArrayList<>();
 
-    private short zeroesCount = 0;
+    private byte zeroesCount = 0;
 
     Encoder(String inFile, String outFile) {
         this.inFile = inFile;
@@ -41,7 +41,7 @@ public class Encoder {
         Node huffmanTree = huffman.buildHuffmanTree();
         encode(huffmanTree);
 
-        byte[] newBytes = binaryStringToBytes(getEncodedBits(byteArray));
+        byte[] newBytes = binaryStringToBytes(compress(byteArray));
 
         Byte[] newData = summarizeData(newBytes);
 
@@ -50,13 +50,14 @@ public class Encoder {
         System.out.println("Archiving took " + (System.currentTimeMillis() - start) +" ms");
         System.out.println("Original file size: " + fileSize + " bytes");
 
-        long archivedFileSize = newData.length + Short.BYTES + Short.BYTES;
+        long archivedFileSize = Byte.BYTES + Short.BYTES + newData.length;
         System.out.println("Archived file size: " + archivedFileSize + " bytes");
 
         double archivedPercentage = 100 - Math.round((archivedFileSize / (double) fileSize) * 100);
         System.out.println("Efficiency of archiving: " + archivedPercentage + "%");
     }
 
+    //Collect data in byte array
     private Byte[] summarizeData(byte[] newBytes) {
         ArrayList<Byte> result = new ArrayList<>();
 
@@ -73,6 +74,7 @@ public class Encoder {
         return result.toArray(new Byte[0]);
     }
 
+    //Cast byte[] to Byte[]
     private Byte[] toObjectArray(byte[] bytes) {
         Byte[] result = new Byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
@@ -81,6 +83,7 @@ public class Encoder {
         return result;
     }
 
+    //This method is filling tree shape list, leaves list and map keys & values
     private void encode(Node node) {
         if (node.getValue() != null) {
             treeShape.add(false);
@@ -91,18 +94,19 @@ public class Encoder {
         }
 
         if (node.getLeft() != null) {
-            stack.add(0);
+            stack.push(0);
             encode(node.getLeft());
-            stack.remove(stack.size() - 1);
+            stack.pop();
         }
 
         if (node.getRight() != null) {
-            stack.add(1);
+            stack.push(1);
             encode(node.getRight());
-            stack.remove(stack.size() - 1);
+            stack.pop();
         }
     }
 
+    //generate String from current Stack elements
     private String joinStack() {
         StringBuilder result = new StringBuilder();
         for (Integer i : stack) {
@@ -111,12 +115,14 @@ public class Encoder {
         return result.toString();
     }
 
-    private String getEncodedBits(byte[] byteArray) {
+    //Mapping bytes with binary keys
+    private String compress(byte[] byteArray) {
         StringBuilder result = new StringBuilder();
         for (byte b : byteArray) {
             result.append(map.get(b));
         }
 
+        //adding external zeroes if needed
         zeroesCount = 0;
         while (result.length() % 8 != 0) {
             result.append("0");
@@ -143,8 +149,10 @@ public class Encoder {
         Files.deleteIfExists(Path.of(outFile));
         FileOutputStream fos = new FileOutputStream(outFile, true);
 
-        fos.write(ByteBuffer.allocate(Short.BYTES).putShort(zeroesCount).array());
+        //Writing external zeroes count
+        fos.write(zeroesCount);
 
+        //Writing tree shape size
         fos.write(ByteBuffer.allocate(Short.BYTES).putShort((short) treeShape.size()).array());
 
         byte[] writableData = new byte[newData.length];
