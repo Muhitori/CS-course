@@ -1,4 +1,4 @@
-package com.shpp.p2p.cs.kturevich.assignment16;
+package com.shpp.p2p.cs.kturevich.assignment17.assignment16;
 
 import java.util.Iterator;
 
