@@ -44,7 +44,7 @@ public class MyArrayList<T> implements Iterable<T>{
     //Methods to elements check
     public boolean contains(T obj) {
         for(T el : array) {
-            if (el == obj)
+            if (el.equals(obj))
                 return true;
         }
         return false;
@@ -52,7 +52,7 @@ public class MyArrayList<T> implements Iterable<T>{
 
     public int indexOf(T obj) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == obj)
+            if (array[i].equals(obj))
                 return i;
         }
         return -1;
@@ -61,7 +61,7 @@ public class MyArrayList<T> implements Iterable<T>{
     public int lastIndexOf(T obj) {
         int result = -1;
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == obj)
+            if (array[i].equals(obj))
                 result =  i;
         }
         return result;

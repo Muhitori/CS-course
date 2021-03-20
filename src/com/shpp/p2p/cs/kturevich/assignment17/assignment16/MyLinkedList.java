@@ -109,7 +109,7 @@ public class MyLinkedList<T> implements Iterable<T> {
 
         Node<T> current = this.first;
         for (int i = 0; i < this.size; i++) {
-            if (current.getValue() == obj)
+            if (current.getValue().equals(obj))
                 return true;
 
             current = current.getNext();
@@ -123,7 +123,7 @@ public class MyLinkedList<T> implements Iterable<T> {
 
         Node<T> current = this.first;
         for (int i = 0; i < this.size; i++) {
-            if (current.getValue() == obj)
+            if (current.getValue().equals(obj))
                 return i;
 
             current = current.getNext();
@@ -139,7 +139,7 @@ public class MyLinkedList<T> implements Iterable<T> {
 
         Node<T> current = this.first;
         for (int i = 0; i < this.size; i++) {
-            if (current.getValue() == obj)
+            if (current.getValue().equals(obj))
                 result = i;
 
             current = current.getNext();

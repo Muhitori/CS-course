@@ -8,10 +8,43 @@ public class Assignment17Part1 {
 
     public static void main(String[] args) throws Exception {
         try {
-            priorityQueueCases();
+            hashmapCases();
+            //priorityQueueCases();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void hashmapCases() {
+        System.out.println("~~~~~~~~~~~~~~HASHMAP~~~~~~~~~~~~~~~~~~");
+
+        MyHashMap<String, Integer> hashMap = new MyHashMap<>();
+        System.out.println(hashMap.tableSize());
+
+        hashMap.put("a", 1);
+        hashMap.put("b", 1);
+        System.out.println(hashMap.tableSize());
+
+        hashMap.put("e", 1);
+        hashMap.put("e", 2);
+        System.out.println(hashMap.tableSize());
+
+        hashMap.put("eh", 20);
+        hashMap.put("ehe", 21);
+        System.out.println(hashMap.tableSize());
+
+        hashMap.put("d", 20);
+        hashMap.put("f", 21);
+        System.out.println(hashMap.tableSize());
+
+        System.out.println(Arrays.toString(hashMap.entrySet()));
+        System.out.println(Arrays.toString(hashMap.keySet()));
+        System.out.println(Arrays.toString(hashMap.values()));
+
+        System.out.println(hashMap.get("eh"));
+        System.out.println(hashMap.containsKey("eh"));
+        hashMap.remove("eh", 20);
+        System.out.println(hashMap.containsKey("eh"));
     }
 
     //Queue testing
