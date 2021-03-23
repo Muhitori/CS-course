@@ -1,5 +1,8 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment15;
 
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyLinkedList;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -11,6 +14,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Decoder {
+    private long unarchivedFileSize;
+
     //Path to the file that will be decoded
     private final String inFile;
     //Path to the output file
@@ -18,8 +23,8 @@ public class Decoder {
     //Encoded file in bytes
     private byte[] byteArray;
 
-    ArrayList<Boolean> treeShape = new ArrayList<>();
-    LinkedList<Byte> leaves = new LinkedList<>();
+    MyArrayList<Boolean> treeShape = new MyArrayList<>();
+    MyLinkedList<Byte> leaves = new MyLinkedList<>();
 
     Decoder(String inFile, String outFile) {
         this.inFile = inFile;
@@ -56,13 +61,16 @@ public class Decoder {
         if (zeroesCount > 0)
             decodedBinary = removeExternalZeroes(decodedBinary, zeroesCount);
 
-        ArrayList<Byte> originalData = decode(huffmanTree, decodedBinary);
+        MyLinkedList<Byte> originalData = decode(huffmanTree, decodedBinary);
+        System.out.println("decode");
 
         write(originalData);
 
         System.out.println("Unpacking took " + (System.currentTimeMillis() - start) +" ms");
         System.out.println("Archived file size: " + packedFileSize + " bytes");
-        System.out.println("Unpacked file size: " + originalData.size() + " bytes");
+
+        unarchivedFileSize = originalData.size();
+        System.out.println("Unpacked file size: " + unarchivedFileSize + " bytes");
     }
 
 
@@ -116,8 +124,9 @@ public class Decoder {
     }
 
     //Get original data from compressed binary
-    private ArrayList<Byte> decode(Node node, String[] binaryString) {
-        ArrayList<Byte> result = new ArrayList<>();
+    private MyLinkedList<Byte> decode(Node node, String[] binaryString) {
+        MyLinkedList<Byte> result = new MyLinkedList<>();
+
         for (String s : binaryString) {
             node = s.equals("0") ? node.getLeft() : node.getRight();
 
@@ -173,18 +182,21 @@ public class Decoder {
         return result;
     }
 
-    private void write(ArrayList<Byte> originalData) throws IOException {
+    private void write(MyLinkedList<Byte> originalData) throws IOException {
         Files.deleteIfExists(Path.of(outFile));
         FileOutputStream fos = new FileOutputStream(outFile, true);
 
-        //cast arrayList to array for better performance
-        byte[] dataBytes = new byte[originalData.size()];
+        Object[] objects = originalData.toArray();
+        byte[] bytes = new byte[objects.length];
 
-        for (int i = 0; i < dataBytes.length; i++) {
-            dataBytes[i] = originalData.get(i);
-        }
+        for (int i = 0; i < bytes.length; i++)
+            bytes[i] = (Byte) objects[i];
 
-        fos.write(dataBytes);
+        fos.write(bytes);
         fos.close();
+    }
+
+    public long getUnarchivedFileSize() {
+        return unarchivedFileSize;
     }
 }

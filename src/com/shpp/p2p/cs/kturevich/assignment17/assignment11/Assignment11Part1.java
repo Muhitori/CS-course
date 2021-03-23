@@ -1,41 +1,44 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment11;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.shpp.p2p.cs.kturevich.assignment17.MyHashMap;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
 
 public class Assignment11Part1 {
 
-    public static void main(String[] args) {
-        HashMap<String, Double> variables = new HashMap<>();
+    private double result;
+
+    public Assignment11Part1(String[] args) {
+        MyHashMap<String, Double> variables = new MyHashMap<>();
 
         try {
+            long start = System.currentTimeMillis();
             //Parse formula
             Tokenizer tokenizer = new Tokenizer(args[0].replaceAll(" ", ""));
-            ArrayList<String> formula = tokenizer.getFormulaList();
+            MyArrayList<String> formula = tokenizer.getFormulaList();
 
             parserVariables(args, variables);
 
             Calculator calculator = new Calculator(formula, variables);
-            println("Result: " + calculator.getResult());
+            result = calculator.getResult();
+            System.out.println("Calculating took " + (System.currentTimeMillis() - start) +" ms");
         } catch (Exception e) {
-            println("Exception: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private static void parserVariables(String[] args, HashMap<String, Double> variables) {
+    private static void parserVariables(String[] args, MyHashMap<String, Double> variables) {
         for (int i = 1; i < args.length; i++) {
             parserVariable(args[i], variables);
         }
     }
 
-    private static void parserVariable(String variable, HashMap<String,Double> variables) {
+    private static void parserVariable(String variable, MyHashMap<String,Double> variables) {
         variable = variable.replaceAll(" ", "");
         String[] tmp = variable.split("=");
         variables.put(tmp[0], Double.parseDouble(tmp[1]));
     }
 
-    //Shortcut for println
-    private static void println(String output) {
-        System.out.println(output);
+    public double getResult() {
+        return result;
     }
 }

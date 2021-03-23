@@ -13,10 +13,11 @@ public class Main {
     private final static int MINIMAL_OBJECT_SIZE = 200;
 
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
         String FILENAME = "";
 
         if(args.length == 0){
-            FILENAME = "assets/test.jpg";
+            FILENAME = "assets/13.png";
         } else {
             FILENAME = args[0];
             FILENAME = FILENAME.replaceAll(" ", "");
@@ -31,6 +32,7 @@ public class Main {
             booleans = imageProcessor.getBooleanArray();
 
             System.out.println(findSilhouettes());
+            System.out.println("Finding silhouettes took " + (System.currentTimeMillis() - start) +" ms");
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

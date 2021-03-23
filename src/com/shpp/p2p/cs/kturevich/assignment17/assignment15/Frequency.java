@@ -1,6 +1,6 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment15;
 
-public class Frequency {
+public class Frequency implements Comparable<Frequency> {
     private final Node node;
     private int frequency;
 
@@ -27,5 +27,14 @@ public class Frequency {
                 "value=" + node +
                 ", frequency=" + frequency +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Frequency o) {
+        if (o.getFrequency() > frequency)
+            return -1;
+        else if(o.getFrequency() < frequency)
+            return 1;
+        return 0;
     }
 }

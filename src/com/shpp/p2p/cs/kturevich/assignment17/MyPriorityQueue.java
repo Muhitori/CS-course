@@ -7,7 +7,7 @@ import java.util.Iterator;
 public class MyPriorityQueue<T extends Comparable<T>> implements Iterable<T>{
     T[] array;
 
-    MyPriorityQueue() {
+    public MyPriorityQueue() {
         this.array = (T[]) new Comparable[0];
     }
 
@@ -16,40 +16,45 @@ public class MyPriorityQueue<T extends Comparable<T>> implements Iterable<T>{
         buildHeap();
     }
 
+    //Builds heap from array
     private void buildHeap() {
         for (int i = array.length / 2; i >= 0; i--) {
             heapify(array, i);
         }
     }
 
+    //Method to cast array to heap starting from some index
     private void heapify(T[] heap, int i) {
         int left = 2 * i;
         int right = 2 * i + 1;
-        int largest = i;
+        int min = i;
 
-        if (left < heap.length && heap[left].compareTo(heap[largest]) < 0) {
-            largest = left;
+        //while left < heap.length and heap[left] < heap[min]
+        if (left < heap.length && heap[left].compareTo(heap[min]) < 0) {
+            min = left;
         }
 
-        if (right < heap.length && heap[right].compareTo(heap[largest]) < 0) {
-            largest = right;
+        //while right < heap.length and heap[right] < heap[min]
+        if (right < heap.length && heap[right].compareTo(heap[min]) < 0) {
+            min = right;
         }
 
-        if (i != largest) {
+        if (i != min) {
             T temp = heap[i];
-            heap[i] = heap[largest];
-            heap[largest] = temp;
+            heap[i] = heap[min];
+            heap[min] = temp;
 
-            heapify(heap, largest);
+            heapify(heap, min);
         }
     }
 
-    private void increaseKey(T[] arr, int i, T el) throws Exception {
+    private void increaseKey(T[] arr, int i, T el) {
         if (el == null)
             throw new NullPointerException();
 
         arr[i] = el;
 
+        //while i > 0 and arr[i/2] > arr[i]
         while (i > 0 && arr[i/2].compareTo(arr[i]) > 0) {
             T temp = arr[i/2];
             arr[i/2] = arr[i];
@@ -88,6 +93,10 @@ public class MyPriorityQueue<T extends Comparable<T>> implements Iterable<T>{
 
     public boolean isEmpty() {
         return this.array.length == 0;
+    }
+
+    public int size() {
+        return this.array.length;
     }
 
     public T[] toArray() {

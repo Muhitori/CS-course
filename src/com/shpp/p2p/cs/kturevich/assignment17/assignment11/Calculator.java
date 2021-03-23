@@ -1,5 +1,8 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment11;
 
+import com.shpp.p2p.cs.kturevich.assignment17.MyHashMap;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,28 +11,28 @@ import java.util.List;
  * Class to calculate expression
  * */
 public class Calculator {
-    private final HashMap<String, Double> variables;
+    private final MyHashMap<String, Double> variables;
     private double result;
     //Operators with one operand
     private final String unaryOperators = "sin, cos, tan, atan, log10, log2, sqrt";
     //Operators, a priority of operation depends on it index in array
     private final String[] operators = {unaryOperators, "^", "/, *", "-, +"};
 
-    Calculator(ArrayList<String> formula, HashMap<String, Double> variables) throws Exception {
+    Calculator(MyArrayList<String> formula, MyHashMap<String, Double> variables) throws Exception {
         this.variables = variables;
         calculate(formula);
     }
 
     public double getResult() { return result; }
 
-    private void calculate(List<String> formula) throws Exception {
+    private void calculate(MyArrayList<String> formula) throws Exception {
         for (String s : operators) {
             action(formula, s);
         }
     }
 
     //Perform action with operator
-    private void action(List<String> formula, String operator) throws Exception {
+    private void action(MyArrayList<String> formula, String operator) throws Exception {
         for(int i = 0; i < formula.size() - 1 ; i++) {
             String symbol = formula.get(i);
 
@@ -69,6 +72,7 @@ public class Calculator {
                 double leftOperand = getValue(formula.get(i - 1));
                 double rightOperand = getValue(formula.get(i + 1));
 
+
                 result += execute(leftOperand, symbol, rightOperand);
 
                 //Decrement because we delete more than 1 element above (preventing out of bounds)
@@ -84,14 +88,15 @@ public class Calculator {
     }
 
     //Method for descent, it will remove wrapping brackets when 1 number inside
-    private void proceedCalculation(int i, List<String> formula) throws Exception {
+    private void proceedCalculation(int i, MyArrayList<String> formula) throws Exception {
         calculate(formula.subList(i + 1, formula.lastIndexOf(")")));
-        formula.remove(formula.get(i));
-        formula.remove(")");
+
+        formula.remove(i);
+        formula.remove(i + 1);
     }
 
     //Method for calculating exponent edge cases
-    private void proceedExponent(int index, List<String> formula) throws Exception {
+    private void proceedExponent(int index, MyArrayList<String> formula) throws Exception {
         //Descent if right operand is open bracket
         if(formula.get(index+1).equals("(")) {
             proceedCalculation(index+1, formula);
@@ -107,7 +112,7 @@ public class Calculator {
     }
 
     //Replace expression with result
-    private void updateFormula(List<String> formula, int index, double result) {
+    private void updateFormula(MyArrayList<String> formula, int index, double result) {
         //replace left operand with value
         formula.set(index, String.valueOf(result));
 
@@ -117,7 +122,7 @@ public class Calculator {
     }
 
     //Replace expression with result
-    private void unaryUpdate(List<String> formula, int index, double result) {
+    private void unaryUpdate(MyArrayList<String> formula, int index, double result) {
         //replace operator with value
         formula.set(index, String.valueOf(result));
 
@@ -126,7 +131,7 @@ public class Calculator {
     }
 
     //Return last index of exponent in this scope
-    private int getLastExpIndex(List<String> formula) {
+    private int getLastExpIndex(MyArrayList<String> formula) {
         //Firstly we think than formula does not contains exponent
         int result = -1;
 

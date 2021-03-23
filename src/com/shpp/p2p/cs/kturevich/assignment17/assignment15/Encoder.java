@@ -1,5 +1,10 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment15;
 
+import com.shpp.p2p.cs.kturevich.assignment17.MyHashMap;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyLinkedList;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyStack;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -9,16 +14,17 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Encoder {
+    private long archivedFileSize;
     //First file path
     private final String inFile;
     //Second file path
     private final String outFile;
 
-    private final Stack<Integer> stack = new Stack<>();
-    private final HashMap<Byte, String> map = new HashMap<>();
+    private final MyStack<Integer> stack = new MyStack<>();
+    private final MyHashMap<Byte, String> map = new MyHashMap<>();
 
-    private final LinkedList<Byte> leaves = new LinkedList<>();
-    private final ArrayList<Boolean> treeShape = new ArrayList<>();
+    private final MyLinkedList<Byte> leaves = new MyLinkedList<>();
+    private final MyArrayList<Boolean> treeShape = new MyArrayList<>();
 
     private byte zeroesCount = 0;
 
@@ -35,10 +41,11 @@ public class Encoder {
         long fileSize = Files.size(Paths.get(inFile));
 
         if (byteArray.length == 0)
-            throw new Exception("Empty file!");
+            throw new Exception("Empty file " + inFile + "!");
 
         Huffman huffman = new Huffman(toObjectArray(byteArray));
         Node huffmanTree = huffman.buildHuffmanTree();
+
         encode(huffmanTree);
 
         byte[] newBytes = binaryStringToBytes(compress(byteArray));
@@ -50,7 +57,7 @@ public class Encoder {
         System.out.println("Archiving took " + (System.currentTimeMillis() - start) +" ms");
         System.out.println("Original file size: " + fileSize + " bytes");
 
-        long archivedFileSize = Byte.BYTES + Short.BYTES + newData.length;
+        archivedFileSize = Byte.BYTES + Short.BYTES + newData.length;
         System.out.println("Archived file size: " + archivedFileSize + " bytes");
 
         double archivedPercentage = 100 - Math.round((archivedFileSize / (double) fileSize) * 100);
@@ -59,19 +66,27 @@ public class Encoder {
 
     //Collect data in byte array
     private Byte[] summarizeData(byte[] newBytes) {
-        ArrayList<Byte> result = new ArrayList<>();
+        MyLinkedList<Byte> result = new MyLinkedList<>();
 
         for (Boolean b : treeShape) {
             result.add((byte) (b ? 1 : 0));
         }
 
-        result.addAll(leaves);
+        for (Byte b : leaves) {
+            result.add(b);
+        }
 
         for (byte b : newBytes){
             result.add(b);
         }
 
-        return result.toArray(new Byte[0]);
+        Object[] objects = result.toArray();
+        Byte[] bytes = new Byte[objects.length];
+
+        for (int i = 0; i < bytes.length; i++)
+            bytes[i] = (Byte) objects[i];
+
+        return bytes;
     }
 
     //Cast byte[] to Byte[]
@@ -162,5 +177,9 @@ public class Encoder {
 
         fos.write(writableData);
         fos.close();
+    }
+
+    public long getArchivedFileSize() {
+        return archivedFileSize;
     }
 }

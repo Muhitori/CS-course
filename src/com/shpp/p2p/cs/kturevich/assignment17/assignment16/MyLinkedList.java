@@ -178,12 +178,22 @@ public class MyLinkedList<T> implements Iterable<T> {
     }
 
     public void removeFirst() {
+        if (size == 1) {
+            this.first = this.last = null;
+            this.size--;
+            return;
+        }
         this.first = this.first.getNext();
         this.first.setPrev(null);
         this.size--;
     }
 
     public void removeLast() {
+        if (size == 1) {
+            this.first = this.last = null;
+            this.size--;
+            return;
+        }
         this.last = this.last.getPrev();
         this.last.setNext(null);
         this.size--;
@@ -204,6 +214,10 @@ public class MyLinkedList<T> implements Iterable<T> {
         T result = this.first.getValue();
         removeFirst();
         return result;
+    }
+
+    public boolean isEmpty() {
+        return this.size == 0;
     }
 
     public void clear() {

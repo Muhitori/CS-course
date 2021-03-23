@@ -9,6 +9,7 @@ public class Main {
         HashMap<String, Double> variables = new HashMap<>();
 
         try {
+            long start = System.currentTimeMillis();
             //Parse formula
             Tokenizer tokenizer = new Tokenizer(args[0].replaceAll(" ", ""));
             ArrayList<String> formula = tokenizer.getFormulaList();
@@ -17,6 +18,7 @@ public class Main {
 
             Calculator calculator = new Calculator(formula, variables);
             println("Result: " + calculator.getResult());
+            System.out.println("Calculating took " + (System.currentTimeMillis() - start) +" ms");
         } catch (Exception e) {
             println("Exception: " + e.getMessage());
         }

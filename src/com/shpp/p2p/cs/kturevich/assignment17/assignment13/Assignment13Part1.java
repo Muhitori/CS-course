@@ -1,22 +1,24 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment13;
 
+import com.shpp.p2p.cs.kturevich.assignment16.MyQueue;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyLinkedList;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class Assignment13Part1 {
-
+    private int result;
     private static boolean[][] booleans;
-    private static final Queue<Point> queue = new LinkedList<>();
+    private static final MyLinkedList<Point> queue = new MyLinkedList<>();
     private final static int MINIMAL_OBJECT_SIZE = 200;
 
-    public static void main(String[] args) {
+    public Assignment13Part1(String[] args) {
+        long start = System.currentTimeMillis();
         String FILENAME = "";
 
         if(args.length == 0){
-            FILENAME = "assets/test.jpg";
+            FILENAME = "assets/13.png";
         } else {
             FILENAME = args[0];
             FILENAME = FILENAME.replaceAll(" ", "");
@@ -30,7 +32,8 @@ public class Assignment13Part1 {
 
             booleans = imageProcessor.getBooleanArray();
 
-            System.out.println(findSilhouettes());
+            result = findSilhouettes();
+            System.out.println("Finding silhouettes took " + (System.currentTimeMillis() - start) +" ms");
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -98,5 +101,9 @@ public class Assignment13Part1 {
                 booleans[y][x] = true;
             }
         }
+    }
+
+    public int getResult() {
+        return result;
     }
 }

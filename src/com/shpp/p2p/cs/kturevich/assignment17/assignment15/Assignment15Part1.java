@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Assignment15Part1 {
+    private static long result;
 
-    private static final String FILENAME = "assets/archive/example2.txt.par";
+    private static final String FILENAME = "assets/archive/example2.txt";
 
-    public static void main(String[] args) throws Exception {
+    public Assignment15Part1(String[] args) throws Exception {
         ArrayList<String> argsList = new ArrayList<>(Arrays.asList(args));
 
         try {
@@ -24,6 +25,7 @@ public class Assignment15Part1 {
 
                     if (argsList.contains("-a")) {
                         encode(firstFile, secondFile);
+                        return;
                     }
 
                     if (argsList.contains("-u")) {
@@ -34,7 +36,7 @@ public class Assignment15Part1 {
                 singleFIleProcessing(argsList, 0);
             }
         } catch (Exception e) {
-            System.out.println("Error with: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -102,10 +104,16 @@ public class Assignment15Part1 {
     public static void encode(String firstFile, String secondFile) throws Exception {
         Encoder encoder = new Encoder(firstFile, secondFile);
         encoder.main();
+        result = encoder.getArchivedFileSize();
     }
 
     public static void decode(String firstFile, String secondFile) throws Exception {
         Decoder decoder = new Decoder(firstFile, secondFile);
         decoder.main();
+        result = decoder.getUnarchivedFileSize();
+    }
+
+    public long getResult() {
+        return result;
     }
 }

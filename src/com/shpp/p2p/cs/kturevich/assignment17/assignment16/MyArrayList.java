@@ -1,13 +1,65 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment16;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 //ArrayList implementation
 @SuppressWarnings("unchecked")
 public class MyArrayList<T> implements Iterable<T>{
+
+    private class SubList extends MyArrayList<T> {
+        private final MyArrayList<T> parent;
+        private int start;
+        private int size;
+
+        public SubList(MyArrayList<T> parent, int start, int end){
+            this.parent = parent;
+            this.start = start;
+            this.size = end - start;
+        }
+
+        public void add(int index, T object){
+            checkBounds(index);
+            this.parent.add(start + index, object);
+        }
+
+        public T get(int index) {
+            checkBounds(index);
+            return this.parent.get(start + index);
+        }
+
+        public void set(int index, T value) {
+            checkBounds(index);
+            this.parent.set(start + index, value);
+        }
+
+        public SubList subList(int fromIndex, int toIndex) {
+            fromIndex += start;
+            toIndex += start;
+
+            SubList result = new SubList(this, fromIndex, toIndex);
+
+            for (int i = fromIndex; i < toIndex; i++) {
+                result.add(this.parent.get(i));
+            }
+
+            return result;
+        }
+
+        public void remove(int index) {
+            checkBounds(index);
+            this.parent.remove(start + index);
+        }
+
+        private void checkBounds(int index) {
+            if (index < 0 || index > size)
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
     private T[] array;
 
-    MyArrayList() {
+    public MyArrayList() {
         this.array = (T[]) new Object[0];
     }
 
@@ -38,7 +90,23 @@ public class MyArrayList<T> implements Iterable<T>{
     }
 
     public T get(int index) {
+        if (index > size() || index < 0)
+            throw new IndexOutOfBoundsException();
+
         return this.array[index];
+    }
+
+    public void set(int index, T value) {
+        this.array[index] = value;
+    }
+
+    public SubList subList(int fromIndex, int toIndex) {
+        SubList result = new SubList(this, fromIndex, toIndex);
+
+        for (int i = fromIndex; i < toIndex; i++) {
+            result.add(this.array[i]);
+        }
+        return result;
     }
 
     //Methods to elements check
@@ -52,8 +120,9 @@ public class MyArrayList<T> implements Iterable<T>{
 
     public int indexOf(T obj) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(obj))
+            if (array[i].equals(obj)) {
                 return i;
+            }
         }
         return -1;
     }
@@ -69,15 +138,30 @@ public class MyArrayList<T> implements Iterable<T>{
 
     //Methods to remove
     public void remove(int index) {
-        if (array.length == 0)
+        if (size() == 0)
             throw new IndexOutOfBoundsException();
 
-        T[] temp = (T[]) new Object[this.array.length - 1];
+        T[] temp = (T[]) new Object[size() - 1];
 
-        for (int i = 0; i < temp.length; i++) {
-            temp[i] = i < index ? array[i] : array[i + 1];
+        for (int i = 0; i < array.length; i++) {
+            if (i == index) {
+                continue;
+            }
+
+            if (i < index)
+                temp[i] = array[i];
+            else
+                temp[i - 1] = array[i];
         }
+
         this.array = temp;
+    }
+
+    public void remove(T obj) {
+        int index = indexOf(obj);
+
+        if (index != -1)
+            remove(index);
     }
 
     public void clear() {
@@ -90,6 +174,11 @@ public class MyArrayList<T> implements Iterable<T>{
 
     public T[] toArray() {
         return  this.array;
+    }
+
+    @Override
+    public String toString() {
+        return "MyArrayList{" + Arrays.toString(array) + '}';
     }
 
     //Iterator implementation

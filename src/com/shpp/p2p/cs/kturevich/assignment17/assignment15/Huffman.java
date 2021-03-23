@@ -1,19 +1,21 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment15;
 
-import java.util.ArrayList;
+import com.shpp.p2p.cs.kturevich.assignment17.MyPriorityQueue;
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
 
 //Class for Huffman methods
 public class Huffman {
     private Byte[] byteArray;
-    private ArrayList<Frequency> frequencyTable;
+    private MyArrayList<Frequency> frequencyTable;
+    private MyPriorityQueue<Frequency> queue = new MyPriorityQueue<>();
 
-    Huffman(Byte[] byteArray) {
+    Huffman(Byte[] byteArray) throws Exception {
         this.byteArray = byteArray;
         setFrequencyTable();
     }
 
-    private void setFrequencyTable() {
-        frequencyTable = new ArrayList<>();
+    private void setFrequencyTable() throws Exception {
+        frequencyTable = new MyArrayList<>();
 
         for (Byte b : byteArray) {
             Frequency temp = containsValue(frequencyTable, b);
@@ -26,20 +28,22 @@ public class Huffman {
             }
             frequencyTable.add(new Frequency(new Node(b), 1));
         }
+
+        for (Frequency f : frequencyTable) {
+            queue.add(f);
+        }
     }
 
-    public Node buildHuffmanTree () {
-        while (frequencyTable.size() > 1) {
+    public Node buildHuffmanTree () throws Exception {
+        while (queue.size() > 1) {
             Node newNode = new Node(null);
 
             //Get nodes with smallest values...
-            Frequency first = minimumNode(frequencyTable);
+            Frequency first = queue.poll();
             Node firstNode = first.getNode();
-            frequencyTable.remove(first);
 
-            Frequency second = minimumNode(frequencyTable);
+            Frequency second =  queue.poll();;
             Node secondNode = second.getNode();
-            frequencyTable.remove(second);
 
             //...and add them to new node which value is summarized from its children
             firstNode.setParent(newNode);
@@ -47,24 +51,13 @@ public class Huffman {
 
             newNode.setLeft(firstNode);
             newNode.setRight(secondNode);
-            frequencyTable.add(new Frequency(newNode, first.getFrequency()+ second.getFrequency()));
+            queue.add(new Frequency(newNode, first.getFrequency()+ second.getFrequency()));
         }
-        return frequencyTable.get(0).getNode();
-    }
-
-    //Return node with smallest value
-    private Frequency minimumNode(ArrayList<Frequency> arr) {
-        Frequency minimum = arr.get(0);
-        for (Frequency frequency : arr) {
-            if (frequency.getFrequency() < minimum.getFrequency()) {
-                minimum = frequency;
-            }
-        }
-        return minimum;
+        return queue.poll().getNode();
     }
 
     //Check if node already exists in table
-    private Frequency containsValue (ArrayList<Frequency> arr, Byte c) {
+    private Frequency containsValue (MyArrayList<Frequency> arr, Byte c) {
         for (Frequency frequency : arr) {
             if (frequency.getNode().getValue().equals(c)) {
                 return frequency;

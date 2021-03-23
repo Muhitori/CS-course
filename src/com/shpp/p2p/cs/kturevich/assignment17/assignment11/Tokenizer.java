@@ -1,18 +1,20 @@
 package com.shpp.p2p.cs.kturevich.assignment17.assignment11;
 
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyArrayList;
+
 import java.util.ArrayList;
 
 /**
  * Class to create ArrayList from formula string
  * */
 public class Tokenizer {
-    private ArrayList<String> formulaList = new ArrayList<>();
+    private MyArrayList<String> formulaList = new MyArrayList<>();
 
     Tokenizer(String formula) {
         parse(formula);
     }
 
-    public ArrayList<String> getFormulaList() {
+    public MyArrayList<String> getFormulaList() {
         return formulaList;
     }
 
@@ -48,7 +50,11 @@ public class Tokenizer {
             previousSymbol = currentSymbol;
         }
 
-        formulaList.removeIf(s -> s.equals(""));
+        for (String s : formulaList) {
+            if (s.equals("")) {
+                formulaList.remove(formulaList.indexOf(s));
+            }
+        }
     }
 
     //Return tru if iy is operator

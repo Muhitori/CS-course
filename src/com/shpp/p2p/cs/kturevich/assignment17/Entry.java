@@ -37,12 +37,4 @@ public class Entry<K, V> {
     public boolean equals(Entry<K, V> entry) {
         return entry.getKey().equals(this.key) && entry.getValue().equals(this.value);
     }
-
-    @Override
-    public String toString() {
-        return "Entry{" +
-                "key=" + key +
-                ", value=" + value +
-                '}';
-    }
 }

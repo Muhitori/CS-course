@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Assignment15Part1 {
 
-    private static final String FILENAME = "assets/archive/example2.txt.par";
+    private static final String FILENAME = "assets/archive/dictionary.txt.par";
 
     public static void main(String[] args) throws Exception {
         ArrayList<String> argsList = new ArrayList<>(Arrays.asList(args));
