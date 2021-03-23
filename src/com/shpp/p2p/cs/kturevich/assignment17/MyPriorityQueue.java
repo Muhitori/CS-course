@@ -25,8 +25,8 @@ public class MyPriorityQueue<T extends Comparable<T>> implements Iterable<T>{
 
     //Method to cast array to heap starting from some index
     private void heapify(T[] heap, int i) {
-        int left = 2 * i;
-        int right = 2 * i + 1;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
         int min = i;
 
         //while left < heap.length and heap[left] < heap[min]

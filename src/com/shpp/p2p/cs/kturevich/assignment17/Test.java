@@ -90,7 +90,7 @@ public class Test {
 
                 {"(2 + 2)"},
                 {"(2 + 2) * 2"},
-                {"(2 + (2 + 2) * 2)"},
+                {"2 + (2 + 2) * 2"},
 
                 {"2^3^2"},
                 {"(2^3)^2"}
@@ -145,7 +145,7 @@ public class Test {
                 {"assets/dictionary.txt.par"},
         };
 
-        long[] values = {20, 10, 627477, 1176877};
+        long[] values = {20, 10, 628845, 1176877};
 
         for (int i = 0; i < parameters.length; i++) {
             archiver = new Assignment15Part1(parameters[i]);

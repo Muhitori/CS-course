@@ -10,8 +10,8 @@ public class Assignment17Part1 {
             test.priorityQueueCases();
 
             test.assignment11Cases();
-//            test.assignment13Cases();
-//            test.assignment15Cases();
+            test.assignment13Cases();
+            test.assignment15Cases();
         } catch (Exception e) {
             e.printStackTrace();
         }

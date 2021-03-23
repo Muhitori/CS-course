@@ -62,7 +62,6 @@ public class Decoder {
             decodedBinary = removeExternalZeroes(decodedBinary, zeroesCount);
 
         MyLinkedList<Byte> originalData = decode(huffmanTree, decodedBinary);
-        System.out.println("decode");
 
         write(originalData);
 
