@@ -2,12 +2,16 @@ package com.shpp.p2p.cs.kturevich.assignment16;
 
 import java.util.Iterator;
 
-//Queue implementation
+/**
+ * Queue implementation
+ * */
 @SuppressWarnings("unchecked")
 public class MyQueue<T> implements Iterable<T>{
     private T[] queue = (T[]) new Object[0];
 
-    //Add value as head of the queue
+    /**
+     * Add value as head of the queue
+     * */
     public void add(T element) {
         T[] temp = (T[]) new Object[queue.length + 1];
         temp[0] = element;
@@ -15,12 +19,16 @@ public class MyQueue<T> implements Iterable<T>{
         queue = temp;
     }
 
-    //Get current head of the queue without removing
+    /**
+     * Get current head of the queue without removing
+     * */
     public T peek() {
         return queue.length == 0 ? null : queue[0];
     }
 
-    //Get current head of the queue and remove
+    /**
+     * Get current head of the queue and remove
+     * */
     public T poll() {
         if (queue.length == 0)
             throw new IndexOutOfBoundsException();
@@ -33,25 +41,39 @@ public class MyQueue<T> implements Iterable<T>{
         return result;
     }
 
+    /**
+     * Check if queue is empty
+     * */
     public boolean isEmpty() {
         return this.queue.length == 0;
     }
 
+    /**
+     * Method to cast queue to object array
+     * */
     public T[] toArray() {
         return queue;
     }
 
-    //Iterator implementation
+    /**
+     * Iterator implementation
+     * */
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             int i = 0;
 
+            /**
+             * Method to check if next exist
+             * */
             @Override
             public boolean hasNext() {
                 return i < queue.length;
             }
 
+            /**
+             * Method to iterate through array
+             * */
             @Override
             public T next() {
                 if (hasNext()) {

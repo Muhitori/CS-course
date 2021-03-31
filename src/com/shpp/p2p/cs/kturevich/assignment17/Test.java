@@ -8,6 +8,9 @@ import java.util.Arrays;
 
 public class Test {
 
+    /**
+     * HashMap cases
+     * */
     public void hashmapCases() {
         System.out.println("~~~~~~~~~~~~~~HASHMAP~~~~~~~~~~~~~~~~~~");
 
@@ -36,11 +39,13 @@ public class Test {
         printResult("Get", compare(hashMap.get("e"), 2));
 
         printResult("Contains", compare(hashMap.containsKey("eh"), true));
-        hashMap.remove("eh", 20);
+        hashMap.remove("eh");
         printResult("Remove", compare(hashMap.containsKey("eh"), false));
     }
 
-    //PriorityQueue testing
+    /**
+     * PriorityQueue cases
+     * */
     public void priorityQueueCases() throws Exception {
         System.out.println("~~~~~~~~~~~~~~PRIORITYQUEUE~~~~~~~~~~~~~~~~~~");
 
@@ -58,13 +63,13 @@ public class Test {
         printResult("Added 0", compare(new Integer[]{0, 1, 5, 3}, ints.toArray()));
 
         ints.add(2);
-        printResult("Added 2", compare(new Integer[]{0, 1, 2, 3, 5}, ints.toArray()));
+        printResult("Added 2", compare(new Integer[]{0, 1, 3, 5, 2}, ints.toArray()));
 
         ints.add(10);
-        printResult("Added 10", compare(new Integer[]{0, 1, 2, 3, 5, 10}, ints.toArray()));
+        printResult("Added 10", compare(new Integer[]{0, 1, 3, 5, 2, 10}, ints.toArray()));
 
         ints.add(4);
-        printResult("Added 4", compare(new Integer[]{0, 1, 2, 3, 5, 10, 4}, ints.toArray()));
+        printResult("Added 4", compare(new Integer[]{0, 1, 4, 3, 2, 10, 5}, ints.toArray()));
 
         Integer[] integers = {0, 1, 2, 3, 4, 5, 10};
         int i = 0;
@@ -79,7 +84,9 @@ public class Test {
         printResult("Empty peek", compare(ints.peek(), null));
     }
 
-    //Calculator cases
+    /**
+     * Calculator cases
+     * */
     public void assignment11Cases() {
         System.out.println("~~~~~~~~~~~~~~CALCULATOR~~~~~~~~~~~~~~~~~~");
 
@@ -114,7 +121,9 @@ public class Test {
         }
     }
 
-    //Silhouette finder cases
+    /**
+     * Silhouette finder cases
+     * */
     public void assignment13Cases() {
         System.out.println("~~~~~~~~~~~~~~SILHOUETTE FINDER~~~~~~~~~~~~~~~~~~");
         Assignment13Part1 silhouetteFinder;
@@ -133,7 +142,9 @@ public class Test {
         }
     }
 
-    //Huffman archiver cases
+    /**
+     * Huffman archiver cases
+     * */
     public void assignment15Cases() throws Exception {
         System.out.println("~~~~~~~~~~~~~~HUFFMAN ARCHIVER~~~~~~~~~~~~~~~~~~");
         Assignment15Part1 archiver;

@@ -2,18 +2,25 @@ package com.shpp.p2p.cs.kturevich.assignment16;
 
 import java.util.Iterator;
 
-//LinkedList implementation
+/**
+ * LinkedList implementation
+ * */
 @SuppressWarnings("unchecked")
 public class MyLinkedList<T> implements Iterable<T> {
     int size = 0;
     Node<T> first;
     Node<T> last;
 
-    //Methods to add
+    /**
+     * Method to add
+     * */
     public void add(T obj) {
         addLast(obj);
     }
 
+    /**
+     * Method to add by index
+     * */
     public void add(int index, T obj) {
         if (index > size || index < 0)
             throw new IndexOutOfBoundsException("Index is out of bounds!");
@@ -43,6 +50,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         this.size++;
     }
 
+    /**
+     * Method to add at the beginning of the list
+     * */
     public void addFirst(T obj) {
         Node<T> newNode = new Node<>(obj);
 
@@ -61,6 +71,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         this.size++;
     }
 
+    /**
+     * Method to add at the end of the list
+     * */
     public void addLast(T obj) {
         Node<T> newNode = new Node<>(obj);
 
@@ -78,7 +91,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         this.size++;
     }
 
-    //Methods to get
+    /**
+     * Method to get by index
+     * */
     public T get(int index) {
         if (index > size || index < 0)
             throw new IndexOutOfBoundsException("Index is out of bounds!");
@@ -94,15 +109,23 @@ public class MyLinkedList<T> implements Iterable<T> {
         return null;
     }
 
+    /**
+     * Method to get first element
+     * */
     public T getFirst() {
         return this.first.getValue();
     }
 
+    /**
+     * Method to get last element
+     * */
     public T getLast() {
         return this.last.getValue();
     }
 
-    //Methods to elements check
+    /**
+     * Method to check if object exist in array
+     * */
     public boolean contains(T obj) {
         if (this.size == 0)
             return false;
@@ -117,6 +140,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         return false;
     }
 
+    /**
+     * Method to check index of object in array
+     * */
     public int indexOf(T obj) {
         if (this.size == 0)
             return -1;
@@ -131,6 +157,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         return -1;
     }
 
+    /**
+     * Method to check last index of object in array
+     * */
     public int lastIndexOf(T obj) {
         int result = -1;
 
@@ -147,7 +176,9 @@ public class MyLinkedList<T> implements Iterable<T> {
         return result;
     }
 
-    //Methods to remove
+    /**
+     * Method to remove by index
+     * */
     public void remove(int index) {
         if (index > size || index < 0)
             throw new IndexOutOfBoundsException("Index is out of bounds!");
@@ -177,44 +208,67 @@ public class MyLinkedList<T> implements Iterable<T> {
         this.size--;
     }
 
+    /**
+     * Method to remove first element
+     * */
     public void removeFirst() {
         this.first = this.first.getNext();
         this.first.setPrev(null);
         this.size--;
     }
 
+    /**
+     * Method to remove last element
+     * */
     public void removeLast() {
         this.last = this.last.getPrev();
         this.last.setNext(null);
         this.size--;
     }
 
-    //Queue and Stack methods
+    /**
+     * Add value to the end of list
+     * */
     public void push(T obj) {
         addLast(obj);
     }
 
+    /**
+     * Get last value and remove it from the list
+     * */
     public T pop() {
         T result = this.last.getValue();
         removeLast();
         return result;
     }
 
+    /**
+     * Get current head of the list and remove
+     * */
     public T poll() {
         T result = this.first.getValue();
         removeFirst();
         return result;
     }
 
+    /**
+     * Method to clear array
+     * */
     public void clear() {
         this.first = this.last = null;
         this.size = 0;
     }
 
+    /**
+     * Method to get array size
+     * */
     public int size() {
         return this.size;
     }
 
+    /**
+     * Method to cast linkedList to object array
+     * */
     public T[] toArray() {
         T[] result = (T[]) new Object[this.size];
         if (result.length == 0)
@@ -229,17 +283,25 @@ public class MyLinkedList<T> implements Iterable<T> {
         return result;
     }
 
-    //Iterator implementation
+    /**
+     * Iterator implementation
+     * */
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             Node<T> current = first;
 
+            /**
+             * Method to check if next exist
+             * */
             @Override
             public boolean hasNext() {
                 return current != null;
             }
 
+            /**
+             * Method to iterate through array
+             * */
             @Override
             public T next() {
                 if (hasNext()) {

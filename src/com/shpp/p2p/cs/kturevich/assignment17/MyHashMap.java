@@ -1,18 +1,25 @@
 package com.shpp.p2p.cs.kturevich.assignment17;
 
-import com.shpp.p2p.cs.kturevich.assignment16.MyStack;
+
+import com.shpp.p2p.cs.kturevich.assignment17.assignment16.MyStack;
 
 @SuppressWarnings("unchecked")
 public class MyHashMap<K, V> {
     private int TABLE_SIZE = 2;
     private Object[] table;
 
+    /**
+     * MyHashMap empty constructor
+     * */
     public MyHashMap() {
         this.table = new Object[TABLE_SIZE];
     }
 
+    /**
+     * Method to add entry to MyHashMap
+     * */
     public void put(K key, V value) {
-        int index = index(key.hashCode());
+        int index = getIndex(getHash(key));
 
         if (table[index] != null) {
             collisionProcessing(key, value, index);
@@ -23,7 +30,9 @@ public class MyHashMap<K, V> {
         extend();
     }
 
-    //Increase hashmap size if it full
+    /**
+     * Increase hashmap size if it full
+     * */
     private void extend() {
         for (Object o : table) {
             if (o == null)
@@ -37,7 +46,9 @@ public class MyHashMap<K, V> {
         rebuild(entries);
     }
 
-    //If indexes and keys of elements are equal, create chain of elements
+    /**
+     * If indexes and keys of elements are equal, create chain of elements
+     * */
     private void collisionProcessing(K key, V value, int index) {
         Entry<K, V> current = (Entry<K, V>) table[index];
 
@@ -58,8 +69,11 @@ public class MyHashMap<K, V> {
         current.setNext(new Entry<>(key, value));
     }
 
+    /**
+     * Get value by key
+     * */
     public V get(K key) {
-        int index = index(key.hashCode());
+        int index = getIndex(getHash(key));
         Entry<K, V> entry = (Entry<K, V>) table[index];
 
         if (entry == null) {
@@ -82,8 +96,11 @@ public class MyHashMap<K, V> {
         return null;
     }
 
+    /**
+     * Check if element exist in MyHashMap
+     * */
     public boolean containsKey(K key) {
-        int index = index(key.hashCode());
+        int index = getIndex(getHash(key));
         Entry<K, V> entry = (Entry<K, V>) table[index];
 
         if (entry == null) {
@@ -99,13 +116,15 @@ public class MyHashMap<K, V> {
         return entry.getKey().equals(key);
     }
 
-    public void remove(K key, V value) {
+    /**
+     * Method to remove element
+     * */
+    public void remove(K key) {
         Object[] entries = entrySet();
-        Entry<K, V> newEntry = new Entry<>(key, value);
 
         for (int i = 0; i < entries.length; i ++) {
             Entry<K,V> entry = (Entry<K, V>) entries[i];
-            if(entry.equals(newEntry)) {
+            if(entry.getKey().equals(key)) {
                 entries[i] = null;
                 break;
             }
@@ -116,7 +135,9 @@ public class MyHashMap<K, V> {
         rebuild(entries);
     }
 
-    //Get list of keys
+    /**
+     * Get list of keys
+     * */
     public K[] keySet() {
         MyStack<K> result = new MyStack<>();
 
@@ -134,7 +155,9 @@ public class MyHashMap<K, V> {
         return result.toArray();
     }
 
-    //Get list of values
+    /**
+     * Get list of values
+     * */
     public V[] values() {
         MyStack<V> result = new MyStack<>();
 
@@ -152,7 +175,9 @@ public class MyHashMap<K, V> {
         return result.toArray();
     }
 
-    //Get list of entries as object array
+    /**
+     * Get list of entries as object array
+     * */
     public Object[] entrySet() {
         MyStack<Object> result = new MyStack<>();
 
@@ -170,15 +195,30 @@ public class MyHashMap<K, V> {
         return result.toArray();
     }
 
-    private int index(int hash) {
+    /**
+     * Get hash of the key
+     * */
+    private int getHash(K key) {
+        return key == null ? 0 : key.hashCode();
+    }
+
+    /**
+     * Get index of the element by hash
+     * */
+    private int getIndex(int hash) {
         return hash & table.length - 1;
     }
 
+    /**
+     * Get table size (im using it for testing)
+     * */
     public int tableSize() {
         return this.table.length;
     }
 
-    //Add all entries to hashmap
+    /**
+     * Add all entries to hashmap
+     * */
     private void rebuild(Object[] entries) {
         for (Object o : entries) {
             if (o != null) {
